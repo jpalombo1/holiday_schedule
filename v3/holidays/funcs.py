@@ -1,4 +1,5 @@
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
+
 from holidays.constants import Couples, Families, Holidays, Status
 from holidays.place import Place, PrimeSec
 

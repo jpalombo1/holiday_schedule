@@ -1,6 +1,7 @@
-from holidays.constants import Families, Holidays
 from dataclasses import dataclass
 from typing import Dict
+
+from holidays.constants import Families, Holidays
 
 
 @dataclass

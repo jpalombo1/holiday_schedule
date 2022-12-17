@@ -1,6 +1,6 @@
-from holidays.schedule import Scheduler
 from holidays.constants import Couples, Families
 from holidays.rotation import Rotation
+from holidays.schedule import Scheduler
 
 
 def main() -> None:

@@ -1,8 +1,9 @@
 from dataclasses import dataclass
 from typing import Dict, List, Optional
+
 from holidays.constants import Couples, Families, Holidays, Status
+from holidays.funcs import couple_holiday_count, num_available, sibling_match_count
 from holidays.place import Place
-from holidays.funcs import couple_holiday_count, sibling_match_count, num_available
 from holidays.rotation import Rotation
 
 
@@ -31,7 +32,7 @@ class Scheduler:
     sib_weights: Dict[Couples, float]
     rotations: Dict[Couples, List[Rotation]]
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Declare list of places to construct schedule.
 
         Attributes
@@ -147,10 +148,10 @@ class Scheduler:
             tmp_places = self.places + [place]
 
             dist_score = self._calc_fam_spread(tmp_places)
-            hol_dist_score = sum(
-                self._calc_fam_spread(tmp_places, sel_holiday)
-                for sel_holiday in Holidays
-            ) / len(Holidays)
+            # hol_dist_score = sum(
+            #     self._calc_fam_spread(tmp_places, sel_holiday)
+            #     for sel_holiday in Holidays
+            # ) / len(Holidays)
             match_score = self._calc_sib_match([place], other_places)
 
             score = dist_score + match_score

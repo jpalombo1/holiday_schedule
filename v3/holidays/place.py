@@ -1,6 +1,8 @@
 from __future__ import annotations
+
 from dataclasses import dataclass
-from holidays.constants import Holidays, Families, Couples, Status
+
+from holidays.constants import Couples, Families, Holidays, Status
 
 
 @dataclass
