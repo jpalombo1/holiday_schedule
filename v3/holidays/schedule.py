@@ -67,7 +67,7 @@ class Scheduler:
         return sum(
             1 - abs(self.fam_prime_dist[fam] - fam_actual) / self.fam_prime_dist[fam]
             for fam, fam_actual in fam_act_dist.items()
-        ) / len(fam_act_dist)
+        )
 
     def _calc_sib_match(
         self, places: List[Place], year: int, holiday: Holidays
@@ -85,7 +85,7 @@ class Scheduler:
         sib_matches = sibling_match_count(places, couple=self.couple)
         return sum(
             sib_match * self.sib_weights[sib] for sib, sib_match in sib_matches.items()
-        ) / len(places)
+        ) * sum(self.sib_weights.values())
 
     def _add_other_couples(self, year: int, holiday: Holidays) -> List[Place]:
         """Based on the other couples and given rotation of holidays for the year, add the place a couple is at the given year and holiday.
