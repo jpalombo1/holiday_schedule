@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 from holidays.constants import Couples, Families, Holidays, Status
-from holidays.funcs import couple_holiday_count, num_available, sibling_match_count
+from holidays.funcs import couple_holiday_count, sibling_match_count
 from holidays.place import Place
 from holidays.rotation import Rotation
 
@@ -27,10 +27,12 @@ class Scheduler:
     """
 
     couple: Couples
+    start_year: int
     num_years: int
     fam_prime_dist: Dict[Families, float]
     sib_weights: Dict[Couples, float]
     rotations: Dict[Couples, List[Rotation]]
+    history: Optional[List[Place]] = None
 
     def __post_init__(self) -> None:
         """Declare list of places to construct schedule.
@@ -42,8 +44,7 @@ class Scheduler:
         other_places: List[Place]
             List of places gone to by other couples scheduling with.
         """
-        self.places: List[Place] = []
-        self.other_places: List[Place] = []
+        self.places: List[Place] = self.history if self.history is not None else []
 
     def _calc_fam_spread(
         self, places: List[Place], holiday: Optional[Holidays] = None
@@ -68,7 +69,9 @@ class Scheduler:
             for fam, fam_actual in fam_act_dist.items()
         ) / len(fam_act_dist)
 
-    def _calc_sib_match(self, places: List[Place], other_places: List[Place]) -> float:
+    def _calc_sib_match(
+        self, places: List[Place], year: int, holiday: Holidays
+    ) -> float:
         """Get score of sibling matches with the more out of total being best.
 
         First get number of matches between places of ocuple and other places of other couples with map of other couple to num matches.
@@ -76,7 +79,10 @@ class Scheduler:
 
         e.g places is 4 for year of couple, 2 match for Lauren 1 for Ali, weights 0.5 Ali 0.4 Lauren for both score is sum(1*0.5 + 2*0.4)/4 = 0.325
         """
-        sib_matches = sibling_match_count(places, other_places)
+        places = [
+            place for place in places if place.year == year and place.holiday == holiday
+        ]
+        sib_matches = sibling_match_count(places, couple=self.couple)
         return sum(
             sib_match * self.sib_weights[sib] for sib, sib_match in sib_matches.items()
         ) / len(places)
@@ -134,7 +140,7 @@ class Scheduler:
         max_score = -1e10
         max_place: Place
         other_places = self._add_other_couples(year, holiday)
-        self.other_places += other_places
+        self.places += other_places
         for family in Families:
             if family is Families.GONE:
                 continue
@@ -148,13 +154,12 @@ class Scheduler:
             tmp_places = self.places + [place]
 
             dist_score = self._calc_fam_spread(tmp_places)
-            # hol_dist_score = sum(
-            #     self._calc_fam_spread(tmp_places, sel_holiday)
-            #     for sel_holiday in Holidays
-            # ) / len(Holidays)
-            match_score = self._calc_sib_match([place], other_places)
-
-            score = dist_score + match_score
+            hol_dist_score = sum(
+                self._calc_fam_spread(tmp_places, sel_holiday)
+                for sel_holiday in Holidays
+            ) / len(Holidays)
+            match_score = self._calc_sib_match(tmp_places, year=year, holiday=holiday)
+            score = dist_score + match_score + hol_dist_score
             if score > max_score:
                 max_place = place
                 max_score = score
@@ -162,59 +167,6 @@ class Scheduler:
 
     def schedule(self):
         """Main method to do scheduling for every yer and holiday."""
-        for year in range(self.num_years):
+        for year in range(self.start_year, self.num_years + self.start_year):
             for holiday in Holidays:
                 self.places.append(self._attempt_allocation(year, holiday))
-
-    def results(self, actual_year: int = 0):
-        """Printable results based on schedule, including metrics."""
-        for year in range(self.num_years):
-            for holiday in Holidays:
-                our_place = [
-                    place
-                    for place in self.places
-                    if place.year == year and place.holiday == holiday
-                ]
-                other_places = [
-                    place
-                    for place in self.other_places
-                    if place.year == year and place.holiday == holiday
-                ]
-                other_fam_str = "|".join(
-                    f"{place.couple.value:^14}|{place.family.value:^10}"
-                    for place in other_places
-                )
-                print(
-                    f"|{year+actual_year:^3}|{holiday.value:^15}|{our_place[0].couple.value:^4}|{our_place[0].family.value:^10}|{other_fam_str}|"
-                )
-        print()
-
-        match_count = sibling_match_count(self.places, self.other_places)
-        for couple, count in match_count.items():
-            couple_avail = num_available(self.other_places, couple)
-            if couple == self.couple:
-                continue
-            print(
-                f"| {couple.value:^14} | Availble | {couple_avail} | Match | {count} | Percent | {count/couple_avail*100:.2f}% |"
-            )
-        print()
-
-        for holiday in Holidays:
-            hol_spread = couple_holiday_count(self.places, self.couple, holiday=holiday)
-            hol_str = "".join(
-                [
-                    f"{family.value:^7}|{hol_spread[family].primary:^3}|"
-                    for family in Families
-                    if family is not Families.GONE
-                ]
-            )
-            print(f"|{holiday.value:^15}|{hol_str}|")
-        all_spread = couple_holiday_count(self.places, self.couple)
-        all_str = "".join(
-            [
-                f"{family.value:^7}|{all_spread[family].primary:^3}|"
-                for family in Families
-                if family is not Families.GONE
-            ]
-        )
-        print(f"|      All      |{all_str}|")

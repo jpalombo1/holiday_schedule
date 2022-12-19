@@ -14,10 +14,10 @@ class Couples(Enum):
     """Names of couples, main and others ot match."""
 
     US = "Us"
-    ALI = "Ali Chris"
-    LAUREN = "Lauren Aron"
-    JAMES = "James Jenna"
-    GEORGE = "George Dree"
+    ALI = "Ali"
+    LAUREN = "Lauren"
+    JAMES = "James"
+    GEORGE = "George"
 
 
 class Families(Enum):

@@ -1,13 +1,18 @@
+from pathlib import Path
+
 from holidays.constants import Couples, Families
+from holidays.funcs import export_csv, import_places, print_results
 from holidays.rotation import Rotation
 from holidays.schedule import Scheduler
 
 
 def main() -> None:
     """Main execution function. Input sibling scheduled rotations, weights, and desired family visit distribution."""
-    couple = Couples.US
+    COUPLE = Couples.US
     NUM_YEARS = 13
-    YEAR = 2022
+    START_YEAR = 2023
+    HOLIDAY_PLACES = Path(__file__).parent / "data" / "history.csv"
+    HOLIDAY_OUT = Path(__file__).parent / "data" / "schedule.csv"
     rotations = {
         Couples.ALI: [
             Rotation(
@@ -57,18 +62,21 @@ def main() -> None:
         Families.PALOMBO: 0.25,
         Families.PENDOLA: 0.25,
     }
-
     sib_weights = {Couples.ALI: 0.5, Couples.LAUREN: 0.5, Couples.JAMES: 0.005}
+    history = import_places(HOLIDAY_PLACES)
 
     us_schedule = Scheduler(
-        couple=couple,
+        couple=COUPLE,
+        start_year=START_YEAR,
         num_years=NUM_YEARS,
         fam_prime_dist=fam_prim_dist,
         rotations=rotations,
         sib_weights=sib_weights,
+        history=history,
     )
     us_schedule.schedule()
-    us_schedule.results(YEAR)
+    print(print_results(us_schedule.places, main_couple=COUPLE))
+    export_csv(us_schedule.places, HOLIDAY_OUT)
 
 
 if __name__ == "__main__":
