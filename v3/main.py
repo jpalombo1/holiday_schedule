@@ -62,7 +62,7 @@ def main() -> None:
         Families.PALOMBO: 0.25,
         Families.PENDOLA: 0.25,
     }
-    sib_weights = {Couples.ALI: 0.5, Couples.LAUREN: 0.005, Couples.JAMES: 0.005}
+    sib_weights = {Couples.ALI: 0.5, Couples.LAUREN: 0.5, Couples.JAMES: 0.005}
     history = import_places(HOLIDAY_PLACES)
 
     us_schedule = Scheduler(
