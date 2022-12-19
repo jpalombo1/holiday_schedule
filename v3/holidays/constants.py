@@ -1,7 +1,5 @@
 from enum import Enum
 
-GONE = "GONE"
-
 
 class Status(Enum):
     """Status of Get Together, mostly primary."""
