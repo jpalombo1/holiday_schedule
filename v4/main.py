@@ -5,9 +5,9 @@ from holidays.io import export_csv, export_final_csv, import_places
 from holidays.schedule import ali_rule, lauren_rule, our_rule
 from holidays.stats import matches, spread_table
 
-SEED = 192764
-SEED = random.randint(0, 1000000)
-print("seed", SEED)
+SEED = 49471
+# SEED = random.randint(0, 1000000)
+# print("seed", SEED)
 
 INPUT_HISTORY = Path("history.csv")
 YEARS_AHEAD = 13
