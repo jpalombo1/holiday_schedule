@@ -10,7 +10,7 @@ SEED = 49471
 # print("seed", SEED)
 
 INPUT_HISTORY = Path("history.csv")
-YEARS_AHEAD = 13
+YEARS_AHEAD = 5
 
 random.seed(SEED)
 old_places = import_places(INPUT_HISTORY)
