@@ -77,7 +77,7 @@ def lauren_rule(start_year: int, num_years: int) -> list[Place]:
     return sum(holidays, [])
 
 
-def our_rule(start_year: int, num_years: int, old_places: list[Place]) -> list[Place]:
+def our_rule(start_year: int, num_years: int) -> list[Place]:
     ali_places = ali_rule(start_year=start_year, num_years=num_years)
     lauren_places = lauren_rule(start_year=start_year, num_years=num_years)
 

@@ -2,6 +2,7 @@ from pathlib import Path
 from typing import Dict, List
 
 import pandas as pd  # type: ignore
+
 from holidays.constants import Couples, Families, Holidays
 from holidays.place import Place
 
@@ -21,24 +22,6 @@ def import_places(csv_path: Path) -> List[Place]:
         )
         for _, row in pd_csv.iterrows()
     ]
-
-
-def export_csv(places: List[Place], csv_path: Path) -> None:
-    """Export list of places to csv. If year just use int, else get value from enum type."""
-    pd_dict: Dict[str, List[str]] = {
-        "year": [],
-        "couple": [],
-        "holiday": [],
-        "family": [],
-    }
-    for place in places:
-        for key, val in pd_dict.items():
-            if key == "year":
-                val.append(place.__dict__[key])
-                continue
-            val.append(place.__dict__[key].value)
-    pd_df = pd.DataFrame(pd_dict)
-    pd_df.to_csv(csv_path, index=None)
 
 
 def export_final_csv(
