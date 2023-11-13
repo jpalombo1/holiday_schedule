@@ -1,13 +1,6 @@
 from enum import Enum
 
 
-class Status(Enum):
-    """Status of Get Together, mostly primary."""
-
-    PRIMARY = "Primary"
-    SECOND = "Secondary"
-
-
 class Couples(Enum):
     """Names of couples, main and others ot match."""
 
@@ -32,5 +25,5 @@ class Holidays(Enum):
 
     EASTER = "Easter"
     THANKSGIVING = "Thanksgiving"
-    CHRISTMAS = "Christmas"
     EVE = "Christmas Eve"
+    CHRISTMAS = "Christmas"
