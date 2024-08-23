@@ -2,7 +2,6 @@ from pathlib import Path
 from typing import Dict, List
 
 import pandas as pd  # type: ignore
-
 from holidays.constants import Couples, Families, Holidays
 from holidays.place import Place
 

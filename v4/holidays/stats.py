@@ -1,7 +1,6 @@
 from typing import Optional
 
 import numpy as np
-
 from holidays.constants import Couples, Families, Holidays
 from holidays.place import Place
 
